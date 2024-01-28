@@ -21,6 +21,7 @@ impl ResHelper {
     pub fn get_file_path(file_name: &str) -> Result<&str, AppError> {
         match file_name {
             "adb"=> Ok("res/adb"),
+            "scrcpy-server"=>Ok("res/scrcpy-server-v2.3.1"),
             _ => Err(AppError {
                 type_name: "ResHelper".to_string(),
                 message: format!(" There is no resource named {}", file_name),

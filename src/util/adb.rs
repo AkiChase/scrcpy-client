@@ -47,4 +47,23 @@ impl Adb {
             }
         }
     }
+
+    pub fn cmd_push(device_id: &str, src: &str, des: &str) -> Result<String, AppError> {
+        let mut adb_command = Adb::cmd_base();
+        let res = adb_command
+            .args(&["-s", device_id, "push", src, des])
+            .output();
+
+        match res {
+            Ok(output) => {
+                return Ok(String::from_utf8(output.stdout).unwrap());
+            }
+            Err(e) => {
+                return Err(AppError {
+                    type_name: "Adb".to_string(),
+                    message: e.to_string(),
+                })
+            }
+        }
+    }
 }
