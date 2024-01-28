@@ -1,6 +1,4 @@
-
-
-fn init(){
+fn init() {
     scrcpy_client::check_resource();
 }
 
