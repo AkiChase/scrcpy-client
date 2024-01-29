@@ -11,6 +11,7 @@ pub use error::AppError;
 
 mod adb;
 pub use adb::Adb;
+pub use adb::Device;
 
 mod res_helper;
-pub use res_helper::ResHelper;
+pub use res_helper::{ResHelper, ResourceName};

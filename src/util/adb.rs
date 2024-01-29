@@ -1,6 +1,6 @@
 use crate::util::AppError;
 
-use super::ResHelper;
+use super::{ResHelper, ResourceName};
 use std::{io::BufRead, process::Command};
 
 pub struct Device {
@@ -72,7 +72,7 @@ pub struct Adb;
 /// But some output of command won't be output, like adb service startup information.
 impl Adb {
     fn cmd_base() -> Command {
-        Command::new(ResHelper::get_file_path("adb").unwrap())
+        Command::new(ResHelper::get_file_path(ResourceName::Adb).unwrap())
     }
 
     /// execute "adb devices" and return devices list

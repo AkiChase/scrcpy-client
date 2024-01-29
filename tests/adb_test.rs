@@ -1,5 +1,4 @@
-use scrcpy_client::util::Adb;
-use scrcpy_client::util::ResHelper;
+use scrcpy_client::util::{Adb, ResHelper, ResourceName};
 
 #[test]
 fn test_cmd_devices() {
@@ -26,7 +25,7 @@ fn test_cmd_push() {
         println!("no devices!")
     } else {
         let res = devices[0].cmd_push(
-            ResHelper::get_file_path("scrcpy-server").unwrap(),
+            ResHelper::get_file_path(ResourceName::ScrcpyServer).unwrap(),
             "/data/local/tmp/scrcpy-server.jar",
         );
 

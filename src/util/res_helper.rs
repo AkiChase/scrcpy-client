@@ -2,6 +2,11 @@ use std::path::Path;
 
 use super::AppError;
 
+pub enum ResourceName {
+    Adb,
+    ScrcpyServer,
+}
+
 pub struct ResHelper;
 
 impl ResHelper {
@@ -18,14 +23,10 @@ impl ResHelper {
         Ok(())
     }
 
-    pub fn get_file_path(file_name: &str) -> Result<&str, AppError> {
+    pub fn get_file_path(file_name: ResourceName) -> Result<&'static str, AppError> {
         match file_name {
-            "adb"=> Ok("res/adb"),
-            "scrcpy-server"=>Ok("res/scrcpy-server-v2.3.1"),
-            _ => Err(AppError {
-                type_name: "ResHelper".to_string(),
-                message: format!(" There is no resource named {}", file_name),
-            }),
+            ResourceName::Adb => Ok("res/adb"),
+            ResourceName::ScrcpyServer => Ok("res/scrcpy-server-v2.3.1")
         }
     }
 }
