@@ -1,3 +1,11 @@
+/**
+ * util for scrcpy-clent
+ * 
+ * - error
+ * - adb
+ * - res_helper
+ */
+
 mod error;
 pub use error::AppError;
 
