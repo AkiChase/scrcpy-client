@@ -1,3 +1,5 @@
+use std::io::BufRead;
+
 use scrcpy_client::util::{Adb, ResHelper, ResourceName};
 
 #[test]
@@ -25,7 +27,7 @@ fn test_cmd_push() {
         println!("no devices!")
     } else {
         let res = devices[0].cmd_push(
-            ResHelper::get_file_path(ResourceName::ScrcpyServer).unwrap(),
+            ResHelper::get_file_path(ResourceName::ScrcpyServer),
             "/data/local/tmp/scrcpy-server.jar",
         );
 
@@ -39,10 +41,9 @@ fn test_cmd_forward() {
     if devices.len() < 1 {
         println!("no devices!")
     } else {
-        devices[0].cmd_forward(
-            "tcp:27183",
-            "localabstract:scrcpy"
-        ).unwrap();
+        devices[0]
+            .cmd_forward("tcp:27183", "localabstract:scrcpy")
+            .unwrap();
     }
 }
 
@@ -52,9 +53,26 @@ fn test_cmd_shell() {
     if devices.len() < 1 {
         println!("no devices!")
     } else {
-        let res = devices[0].cmd_shell(
-            &["echo", "Hello, world!"]
-        );
-        println!("{}", res.unwrap());
+        let res = devices[0].cmd_shell(&["ping", "-c", "3", "127.0.0.1"]);
+        match res {
+            Err(e) => {
+                eprintln!("{}", e);
+            }
+            Ok(mut child) => {
+                let out = child.stdout.take().unwrap();
+                let mut out = std::io::BufReader::new(out);
+                let mut s = String::new();
+
+                while let Ok(_) = out.read_line(&mut s) {
+                    // break at the end of program
+                    if let Ok(Some(_)) = child.try_wait() {
+                        break;
+                    }
+                    print!("{}", s);
+                    // clear string to store new line only
+                    s.clear();
+                }
+            }
+        }
     }
 }
