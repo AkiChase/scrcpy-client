@@ -3,6 +3,7 @@ use crate::util::AppError;
 use super::{ResHelper, ResourceName};
 use std::{io::BufRead, process::Command};
 
+#[derive(Clone)]
 pub struct Device {
     pub id: String,
     pub status: String,
