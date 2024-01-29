@@ -25,8 +25,7 @@ fn test_cmd_push() {
     if devices.len() < 1 {
         println!("no devices!")
     } else {
-        let res = Adb::cmd_push(
-            &devices[0].id,
+        let res = devices[0].cmd_push(
             ResHelper::get_file_path("scrcpy-server").unwrap(),
             "/data/local/tmp/scrcpy-server.jar",
         );
@@ -41,10 +40,22 @@ fn test_cmd_forward() {
     if devices.len() < 1 {
         println!("no devices!")
     } else {
-        Adb::cmd_forward(
-            &devices[0].id,
+        devices[0].cmd_forward(
             "tcp:27183",
             "localabstract:scrcpy"
         ).unwrap();
+    }
+}
+
+#[test]
+fn test_cmd_shell() {
+    let devices = Adb::cmd_devices().unwrap();
+    if devices.len() < 1 {
+        println!("no devices!")
+    } else {
+        let res = devices[0].cmd_shell(
+            &["echo", "Hello, world!"]
+        );
+        println!("{}", res.unwrap());
     }
 }
