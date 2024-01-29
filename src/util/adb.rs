@@ -1,9 +1,12 @@
 use crate::util::AppError;
 
 use super::{ResHelper, ResourceName};
-use std::{io::BufRead, process::Command};
+use std::{
+    io::BufRead,
+    process::{Child, Command, Stdio},
+};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Device {
     pub id: String,
     pub status: String,
@@ -47,21 +50,20 @@ impl Device {
     }
 
     /// execute "adb shell" to execute shell command on the device
-    pub fn cmd_shell(&self, shell_args: &[&str]) -> Result<String, AppError> {
+    pub fn cmd_shell(&self, shell_args: &[&str]) -> Result<Child, AppError> {
         let mut adb_command = Adb::cmd_base();
         let mut args = vec!["-s", &self.id, "shell"];
         args.extend_from_slice(shell_args);
-        let res = adb_command.args(args).output();
-
+        let res = adb_command.args(args).stdout(Stdio::piped()).spawn();
         match res {
-            Ok(output) => {
-                return Ok(String::from_utf8(output.stdout).unwrap());
-            }
-            Err(e) => {
+            Ok(child)=>{
+                return Ok(child);
+            },
+            Err(e)=>{
                 return Err(AppError {
                     type_name: "Adb".to_string(),
                     message: e.to_string(),
-                })
+                });
             }
         }
     }
@@ -73,7 +75,7 @@ pub struct Adb;
 /// But some output of command won't be output, like adb service startup information.
 impl Adb {
     fn cmd_base() -> Command {
-        Command::new(ResHelper::get_file_path(ResourceName::Adb).unwrap())
+        Command::new(ResHelper::get_file_path(ResourceName::Adb))
     }
 
     /// execute "adb devices" and return devices list

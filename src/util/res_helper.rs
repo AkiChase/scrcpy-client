@@ -23,10 +23,10 @@ impl ResHelper {
         Ok(())
     }
 
-    pub fn get_file_path(file_name: ResourceName) -> Result<&'static str, AppError> {
+    pub fn get_file_path(file_name: ResourceName) -> &'static str {
         match file_name {
-            ResourceName::Adb => Ok("res/adb"),
-            ResourceName::ScrcpyServer => Ok("res/scrcpy-server-v2.3.1")
+            ResourceName::Adb => "res/adb",
+            ResourceName::ScrcpyServer => "res/scrcpy-server-v2.3.1"
         }
     }
 }
