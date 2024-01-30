@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::{io::BufRead, thread};
 
 /**
@@ -9,15 +10,22 @@ use super::util::{Device, ResHelper, ResourceName};
 pub struct ScrcpyClient {
     pub device: Device,
     pub version: String,
+    pub scid: String,
 }
 
 impl ScrcpyClient {
     pub fn new(device: Device) -> ScrcpyClient {
         let file_name = ResHelper::get_file_path(ResourceName::ScrcpyServer);
         let version = &file_name[file_name.rfind('v').unwrap() + 1..];
+
+        // 31bit scid
+        let mut rng = rand::thread_rng();
+        let scid: u32 = rng.gen_range(0..(1 << 31)); // 0 ~2 ^31-1
+
         Self {
             device,
             version: version.to_string(),
+            scid: scid.to_string(),
         }
     }
 
@@ -38,16 +46,19 @@ impl ScrcpyClient {
         }
     }
 
-    /// forward port to current device
-    pub fn forward_server_port(&self) {
-        if let Err(e) = self.device.cmd_forward("tcp:27183", "localabstract:scrcpy") {
-            eprintln!("Failed to forward port.\n{}", e);
+    /// reverse the device port to local port
+    pub fn reverse_server_port(&self) {
+        if let Err(e) = self
+            .device
+            .cmd_reverse(&format!("localabstract:scrcpy_{}", self.scid), "tcp:27183")
+        {
+            eprintln!("Failed to reverse port.\n{}", e);
         } else {
-            println!("Successfully forward port.");
+            println!("Successfully reverse port.");
         }
     }
 
-    /// push server file to current device
+    /// spawn a new thread to start scrcpy server
     pub fn shell_start_server(&self) -> thread::JoinHandle<()> {
         let res = self.device.cmd_shell(&[
             "CLASSPATH=/data/local/tmp/scrcpy-server.jar",
@@ -56,7 +67,7 @@ impl ScrcpyClient {
             "com.genymobile.scrcpy.Server",
             &self.version,
         ]);
-        
+
         thread::spawn(|| {
             match res {
                 Err(e) => {

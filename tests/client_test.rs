@@ -14,13 +14,13 @@ fn test_push_server_file() {
 }
 
 #[test]
-fn test_forward_server_port() {
+fn test_reverse_server_port() {
     let devices = Adb::cmd_devices().unwrap();
     if devices.len() < 1 {
         println!("no devices!")
     } else {
         let client: ScrcpyClient = ScrcpyClient::new(devices[0].clone());
-        client.forward_server_port();
+        client.reverse_server_port();
     }
 }
 

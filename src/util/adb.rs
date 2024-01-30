@@ -33,11 +33,11 @@ impl Device {
         }
     }
 
-    /// execute "adb forward" to forward local port to the device port
-    pub fn cmd_forward(&self, local: &str, remote: &str) -> Result<(), AppError> {
+    /// execute "adb reverse" to reverse the device port to local port
+    pub fn cmd_reverse(&self, remote: &str, local: &str) -> Result<(), AppError> {
         let mut adb_command = Adb::cmd_base();
         let res = adb_command
-            .args(&["-s", &self.id, "forward", local, remote])
+            .args(&["-s", &self.id, "reverse", remote, local])
             .output();
         if let Err(e) = res {
             return Err(AppError {
