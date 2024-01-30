@@ -56,10 +56,10 @@ impl Device {
         args.extend_from_slice(shell_args);
         let res = adb_command.args(args).stdout(Stdio::piped()).spawn();
         match res {
-            Ok(child)=>{
+            Ok(child) => {
                 return Ok(child);
-            },
-            Err(e)=>{
+            }
+            Err(e) => {
                 return Err(AppError {
                     type_name: "Adb".to_string(),
                     message: e.to_string(),
@@ -117,6 +117,20 @@ impl Adb {
     pub fn cmd_kill_server() -> Result<(), AppError> {
         let mut adb_command = Adb::cmd_base();
         let res = adb_command.args(&["kill-server"]).output();
+        if let Err(e) = res {
+            return Err(AppError {
+                type_name: "Adb".to_string(),
+                message: e.to_string(),
+            });
+        } else {
+            return Ok(());
+        }
+    }
+
+    /// execute "adb reverse --remove-all"
+    pub fn cmd_reverse_remove() -> Result<(), AppError> {
+        let mut adb_command = Adb::cmd_base();
+        let res = adb_command.args(&["reverse", " --remove-all"]).output();
         if let Err(e) = res {
             return Err(AppError {
                 type_name: "Adb".to_string(),

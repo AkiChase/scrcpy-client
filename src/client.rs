@@ -18,9 +18,9 @@ impl ScrcpyClient {
         let file_name = ResHelper::get_file_path(ResourceName::ScrcpyServer);
         let version = &file_name[file_name.rfind('v').unwrap() + 1..];
 
-        // 31bit scid
+        // 16bit scid (no need to 31bit)
         let mut rng = rand::thread_rng();
-        let scid: u32 = rng.gen_range(0..(1 << 31)); // 0 ~2 ^31-1
+        let scid = rng.gen_range(0..(1 << 16));
 
         Self {
             device,
@@ -66,14 +66,16 @@ impl ScrcpyClient {
             "/",
             "com.genymobile.scrcpy.Server",
             &self.version,
+            &format!("scid={}", self.scid),
         ]);
 
         thread::spawn(|| {
             match res {
                 Err(e) => {
-                    eprintln!("{}", e);
+                    eprintln!("start failed.\n{}", e);
                 }
                 Ok(mut child) => {
+                    println!("starting server...");
                     let out = child.stdout.take().unwrap();
                     let mut out = std::io::BufReader::new(out);
                     let mut s = String::new();

@@ -21,6 +21,11 @@ fn test_cmd_start_server() {
 }
 
 #[test]
+fn test_cmd_reverse_remove() {
+    Adb::cmd_reverse_remove().unwrap()
+}
+
+#[test]
 fn test_cmd_push() {
     let devices = Adb::cmd_devices().unwrap();
     if devices.len() < 1 {
