@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.5"
+tokio = { version = "1.36.0", features = ["rt-multi-thread", "net", "macros","io-util"] }
+anyhow = "1.0"

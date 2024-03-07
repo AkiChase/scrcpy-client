@@ -53,6 +53,18 @@ fn test_cmd_reverse() {
 }
 
 #[test]
+fn test_cmd_forward() {
+    let devices = Adb::cmd_devices().unwrap();
+    if devices.len() < 1 {
+        println!("no devices!")
+    } else {
+        devices[0]
+            .cmd_forward("tcp:27183", "localabstract:scrcpy")
+            .unwrap();
+    }
+}
+
+#[test]
 fn test_cmd_shell() {
     let devices = Adb::cmd_devices().unwrap();
     if devices.len() < 1 {
