@@ -1,17 +1,13 @@
 /**
  * util for scrcpy-clent
- * 
- * - error
+ *
  * - adb
  * - res_helper
+ * - socket
  */
 
-mod error;
-pub use error::AppError;
-
 mod adb;
-pub use adb::Adb;
-pub use adb::Device;
+pub use adb::{Adb, Device};
 
 mod res_helper;
 pub use res_helper::{ResHelper, ResourceName};
